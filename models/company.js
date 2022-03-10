@@ -89,8 +89,7 @@ class Company {
 
   /** Update company data with `data`.
    *
-   * This is a "partial update" --- it's fine if data doesn't contain all the
-   * fields; this only changes provided ones.
+   * This is a "partial update"
    *
    * Data can include: {name, description, numEmployees, logoUrl}
    *
