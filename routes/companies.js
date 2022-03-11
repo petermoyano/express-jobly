@@ -11,6 +11,7 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const companyPartialGet = require("../schemas/companyPartialGet.json");
 
 const router = new express.Router();
 
@@ -52,7 +53,13 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   try {
+    console.log(req.query.minEmployees, typeof(req.query.minEmployees));
     // req.query may be undefined or have one or more of the following: {partialName, minEmployees, maxEmployees}
+    const validator = jsonschema.validate(req.query, companyPartialGet);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
     const data = req.query || {}; 
     const companies = await Company.findAll(data);
     return res.json({ companies });

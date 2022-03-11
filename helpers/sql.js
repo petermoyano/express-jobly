@@ -34,36 +34,35 @@ function sqlForPartialGet(data) {
   const { partialName, minEmployees = 0 , maxEmployees = 999999} = data;
   let whereSQL = "";
   const values = [];
+
   // User gave no data for partial get
   if(Object.keys(data).length === 0){
     console.log("option 1");		
     console.log({whereSQL, values});
     return {whereSQL, values};
   }
+
   // User gave name and range of Employess
   if(Object.values(data).length >= 2){
-    if(minEmployees > maxEmployees){
-      console.log("option 1");		
-
+    if(minEmployees > maxEmployees){	
       throw new ExpressError("Invalid request: minEmployees can't be larger than maxEmployees", 400);
     }
-    console.log("option 2");		
     whereSQL = `WHERE name  ILIKE $1 AND num_employees BETWEEN $2 AND $3`;
     values.push(`%${partialName}%`, minEmployees, maxEmployees);
   }
+
   // User gave partialName, with no Employees range
-  else if(!data.minEmployees && !data.maxEmployees && data.partialName){
-    console.log("option 3");		
+  else if(!data.minEmployees && !data.maxEmployees && data.partialName){	
     whereSQL = 'WHERE name  LIKE $1';
     values.push(`%${partialName}%`);
   }
+
   // User gave Employees range with no partialName 
-  else{
-    console.log("option 4");		
+  else{	
     whereSQL = 'WHERE num_employees BETWEEN $1 AND $2';
     values.push(minEmployees, maxEmployees);
   }
-  console.log({whereSQL, values})
+  
   return {whereSQL, values}
 }
 
