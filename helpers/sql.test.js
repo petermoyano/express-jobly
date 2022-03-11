@@ -24,3 +24,12 @@ describe("test sqlForPartialUpdate", function () {
         });
     }) 
 });
+
+
+/* tests for get partial companies 
+
+sqlForPartialGet({});
+sqlForPartialGet({partialName : "Mil"});
+sqlForPartialGet({minEmployees: 45, maxEmployees: 756});
+sqlForPartialGet({minEmployees: 45, maxEmployees: 756, partialName : "Mil"});
+sqlForPartialGet({minEmployees: 450, maxEmployees: 75, partialName : "Mil"}); */
