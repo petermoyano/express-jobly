@@ -68,6 +68,7 @@ describe("POST /companies", function () {
 describe("GET /companies", function () {
   test("ok for anon", async function () {
     const resp = await request(app).get("/companies");
+    expect(resp.statusCode).toBe(200);
     expect(resp.body).toEqual({
       companies:
         [
@@ -98,6 +99,7 @@ describe("GET /companies", function () {
 
   test("filtering with minEmployees", async () => {
     const response = await request(app).get("/companies").query({ minEmployees: 2 });
+    expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
       companies: [
         {
@@ -120,6 +122,7 @@ describe("GET /companies", function () {
 
   test("filtering with minEmployees and maxEmployees", async () => {
     const response = await request(app).get("/companies").query({ minEmployees: 2, maxEmployees: 3 });
+    expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
       companies: [
         {
@@ -140,8 +143,9 @@ describe("GET /companies", function () {
     })
   });
 
-  test("filtering just filtering by name", async () => {
+  test("filtering just by name", async () => {
     const response = await request(app).get("/companies").query({ partialName: "2" });
+    expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
       companies: [
         {
@@ -155,8 +159,9 @@ describe("GET /companies", function () {
     })
   });
 
-  test("filtering just filtering by all filters", async () => {
+  test("filtering using all filters", async () => {
     const response = await request(app).get("/companies").query({ partialName: "C", minEmployees: 1, maxEmployees: 2 });
+    expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
       companies: [
         {
@@ -177,6 +182,17 @@ describe("GET /companies", function () {
     })
   })
 
+  test("min employees higher than max", async function () {
+    const resp = await request(app).get(`/companies`).query({ minEmployees: 3, maxEmployees: 1 });
+    expect(resp.statusCode).toBe(400);
+  });
+
+
+  test("min employees is a string", async function (){
+    const resp = await request(app).get('/companies').query({minEmployees: "string"})
+    expect(resp.statusCode).toBe(400);
+
+  })
   test("fails: test next() handler", async function () {
     // there's no normal failure event which will cause this route to fail ---
     // thus making it hard to test that the error-handler works with it. This

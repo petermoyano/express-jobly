@@ -35,20 +35,23 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 function sqlForPartialGet(data) {
   // partialName may be undefined
   const { partialName = "", minEmployees = 0 , maxEmployees = 999999 } = data;
-  console.log(`minEmployees is ${minEmployees} and maxEmployees is ${maxEmployees}, lastly partialName is: ${partialName}`);
   let whereSQL = "";
   const values = [];
 
   // User gave no data for partial get
   if(Object.keys(data).length === 0){
-    return {whereSQL, values};
+    return {whereSQL, values};S
   }
-
+  //User gave invalid parameters for min or max Employees
+  if(isNaN(parseInt(minEmployees)) || isNaN(parseInt(maxEmployees) === NaN)){
+    throw new ExpressError("number of employees must be a number", 400)
+  }
   // User gave name and range of Employess
   if(Object.values(data).length >= 2){
     if(minEmployees > maxEmployees){	
       throw new ExpressError("Invalid request: minEmployees can't be larger than maxEmployees", 400);
     }
+  
     whereSQL = `WHERE name  ILIKE $1 AND num_employees BETWEEN $2 AND $3`;
     values.push(`%${partialName}%`, minEmployees, maxEmployees);
   }
