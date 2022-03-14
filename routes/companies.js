@@ -53,7 +53,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   try {
-    console.log(req.query.minEmployees, typeof(req.query.minEmployees));
+    
     // req.query may be undefined or have one or more of the following: {partialName, minEmployees, maxEmployees}
     const validator = jsonschema.validate(req.query, companyPartialGet);
     if (!validator.valid) {

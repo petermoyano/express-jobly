@@ -27,18 +27,20 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
     values: Object.values(dataToUpdate),
   };
 }
-// data will be one the following: {}, { partialName }, { partialName, minEmployees, maxEmployees },
-// { minEmployees, maxEmployees } 
+
+
+// sqlForPartialGet: data parameter will be one the following: {}, { partialName }, 
+// { partialName, minEmployees, maxEmployees }, { minEmployees, maxEmployees } 
+
 function sqlForPartialGet(data) {
   // partialName may be undefined
-  const { partialName, minEmployees = 0 , maxEmployees = 999999} = data;
+  const { partialName = "", minEmployees = 0 , maxEmployees = 999999 } = data;
+  console.log(`minEmployees is ${minEmployees} and maxEmployees is ${maxEmployees}, lastly partialName is: ${partialName}`);
   let whereSQL = "";
   const values = [];
 
   // User gave no data for partial get
   if(Object.keys(data).length === 0){
-    console.log("option 1");		
-    console.log({whereSQL, values});
     return {whereSQL, values};
   }
 

@@ -60,7 +60,8 @@ describe("create", function () {
 
 describe("findAll", function () {
   test("works: no filter", async function () {
-    let companies = await Company.findAll();
+    let query = {partialName : ""}
+    let companies = await Company.findAll(query);
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -85,7 +86,81 @@ describe("findAll", function () {
       },
     ]);
   });
+
+  test("works: filter by by min employees", async function () {
+    let companies = await Company.findAll({partialName: "", minEmployees: 2 });
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      },
+    ]);
+  }); 
+
+
+  test("works: filter by max employees", async function () {
+    let companies = await Company.findAll({partialName: "", maxEmployees: 2 });
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      }
+    ]);
+  }); 
 });
+
+test("works: filter by both min and max employees", async function () {
+    let companies = await Company.findAll({partialName: "", minEmployees: 1, maxEmployees: 2 });
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      }
+    ]);
+  }); 
+
+  test("works: filter by name", async function () {
+    let companies = await Company.findAll({partialName: "2" });
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      }
+    ]);
+  }); 
 
 /************************************** get */
 
