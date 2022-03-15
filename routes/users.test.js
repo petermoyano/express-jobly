@@ -344,10 +344,25 @@ describe("PATCH /users/:username", () => {
 /************************************** DELETE /users/:username */
 
 describe("DELETE /users/:username", function () {
-  test("works for users", async function () {
+  test("works for user deleting own profile", async function () {
     const resp = await request(app)
       .delete(`/users/u1`)
       .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.body).toEqual({ deleted: "u1" });
+  });
+
+  test("doesn't work for user deleting another proifle", async function () {
+    const resp = await request(app)
+      .delete(`/users/u1`)
+      .set("authorization", `Bearer ${u3Token}`);
+    expect(resp.statusCode).toBe(401);
+  });
+
+
+  test("works for admin", async function () {
+    const resp = await request(app)
+      .delete(`/users/u1`)
+      .set("authorization", `Bearer ${u2Token}`);
     expect(resp.body).toEqual({ deleted: "u1" });
   });
 
