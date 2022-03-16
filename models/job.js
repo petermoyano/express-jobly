@@ -16,19 +16,19 @@ class Job {
      * Throws BadRequestError if Job already in database.
      * */
 
-    static async create({ title, salary, equity, company_handle }) {
+    static async create(data) {
         const result = await db.query(
             `INSERT INTO jobs
            (title, salary, equity, company_handle)
            VALUES ($1, $2, $3, $4)
-           RETURNING title, salary, equity, company_handle AS "companyHandle"`,
+           RETURNING id, title, salary, equity, company_handle AS "companyHandle"`,
             [
-                title, salary, equity, company_handle
+                data.title, data.salary, data.equity, data.companyHandle
             ],
         );
-        const Job = result.rows[0];
+        const job = result.rows[0];
 
-        return Job;
+        return job;
     }
 
     /** Find all jobs.
@@ -72,6 +72,7 @@ class Job {
         if (whereExpressions.length > 0) {
             query += " WHERE " + whereExpressions.join(" AND ");
         }
+
         // Finalize query and return results
         query += " ORDER BY title";
         const jobsRes = await db.query(query, queryValues);
@@ -94,9 +95,9 @@ class Job {
            WHERE id = $1`,
             [id]);
 
-        const Job = JobRes.rows[0];
+        const job = JobRes.rows[0];
 
-        if (!Job) throw new NotFoundError(`No Job: ${id}`);
+        if (!job) throw new NotFoundError(`No Job: ${id}`);
 
         const companiesRes = await db.query(
             `SELECT handle,
@@ -110,7 +111,7 @@ class Job {
         delete job.companyHandle;
         job.company = companiesRes.rows[0];
 
-        return Job;
+        return job;
     }
 
     /** Update Job data with `data`.
