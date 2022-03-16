@@ -14,6 +14,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 /** Related functions for users. */
 
 class User {
+ 
   /** authenticate user with username, password.
    *
    * Returns { username, first_name, last_name, email, is_admin }
@@ -206,6 +207,35 @@ class User {
     const user = result.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
+  }
+/* Allows a user to apply for a job posting */
+  static async apply(id, username){
+
+    const checkId = await db.query(`SELECT id FROM jobs WHERE id = $1`, [id]);
+
+    if (checkId.rows.length === 0) {
+      throw new NotFoundError(`Job Id Not Found: ${id}`);
+    }
+
+    const checkUserName = await db.query(
+      `SELECT username FROM users WHERE username = $1`,
+      [username]
+    );
+
+    if (checkUserName.rows.length === 0) {
+      throw new NotFoundError(`Username Not Found: ${username}`);
+    }
+
+    const applyRes = await db.query(
+      `
+    INSERT INTO applications
+    (username, job_id) VALUES ($1, $2)
+    RETURNING username, job_id
+    `,
+      [username, id]
+    );
+    const application = applyRes.rows[0];
+    return application;
   }
 }
 

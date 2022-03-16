@@ -44,6 +44,25 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 });
 
 
+/* POST /users/:username/jobs/:id => returns {applied: id}
+
+Allows a user to apply for a job posting
+
+Authorization required: login
+
+*/
+
+router.post("/:username/jobs/:id", ensureAdminOrLoggedInUser, async function(req, res, next){
+  try{
+    const application = User.apply(req.params.id, req.params.username);
+    console.log(application.rows);
+    return res.json({applied: +req.params.id});
+
+  }catch(error){
+    return next(error);
+  }
+})
+
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of all users.
@@ -68,7 +87,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  * Authorization required: login
  **/
 
-router.get("/:username", ensureAdminOrLoggedInUser, async function (req, res, next) {
+router.get("/:username", ensureLoggedIn, async function (req, res, next) {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });
