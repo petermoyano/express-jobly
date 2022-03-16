@@ -92,6 +92,7 @@ class Company {
        ORDER BY id`,
       [handle],
     );
+
     company.jobs = jobsPostings.rows
     return company;
   }

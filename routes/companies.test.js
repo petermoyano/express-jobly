@@ -11,7 +11,9 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
-  u2Token
+  u2Token,
+  testJobs,
+  testJobsId
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -215,6 +217,7 @@ describe("GET /companies/:handle", function () {
         description: "Desc1",
         numEmployees: 1,
         logoUrl: "http://c1.img",
+        jobs: [testJobs[0]]
       },
     });
   });
@@ -228,6 +231,7 @@ describe("GET /companies/:handle", function () {
         description: "Desc2",
         numEmployees: 2,
         logoUrl: "http://c2.img",
+        jobs: [testJobs[1]]
       },
     });
   });

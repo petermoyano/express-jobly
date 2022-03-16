@@ -9,12 +9,12 @@ const {
   UnauthorizedError,
 } = require("../expressError");
 
-const { BCRYPT_WORK_FACTOR } = require("../config.js");
+const { BCRYPT_WORK_FACTOR } = require("../config.test");
 
 /** Related functions for users. */
 
 class User {
- 
+
   /** authenticate user with username, password.
    *
    * Returns { username, first_name, last_name, email, is_admin }
@@ -126,13 +126,15 @@ class User {
 
   static async get(username) {
     const userRes = await db.query(
-      `SELECT username,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
-                  email,
-                  is_admin AS "isAdmin"
-           FROM users
-           WHERE username = $1`,
+      `SELECT u.username,
+      u.first_name AS "firstName",
+      u.last_name AS "lastName",
+      u.email,
+      u.is_admin AS "isAdmin",
+      JSON_AGG(a.job_id) AS jobs
+        FROM users u
+        LEFT JOIN applications a ON a.username = u.username
+        WHERE u.username = $1 GROUP BY u.username`,
       [username],
     );
 
@@ -208,8 +210,11 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
-/* Allows a user to apply for a job posting */
-  static async apply(id, username){
+
+
+
+  /* Allows a user to apply for a job posting */
+  static async apply(id, username) {
 
     const checkId = await db.query(`SELECT id FROM jobs WHERE id = $1`, [id]);
 

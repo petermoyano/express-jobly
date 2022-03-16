@@ -6,12 +6,13 @@ const {
   UnauthorizedError,
 } = require("../expressError");
 const db = require("../db.js");
-const User = require("./user.js");
+const User = require("./user");
 const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  testJobIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -140,6 +141,7 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@email.com",
       isAdmin: false,
+      jobs: [testJobIds[0]]
     });
   });
 
